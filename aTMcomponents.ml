@@ -20,18 +20,21 @@ let action =
 let account_spec = {name : string; id : id; balance : int} ;;
 
 let ref database = {name : string list; id : id list; balance : int list} ;; 
-
+let accounts = ref [] ;;
 (* initialize accts -- Establishes a database of accounts, each with a
    name, aribtrary id, and balance. The names and balances are
    initialized as per the `accts` provided. *)
-let initialize (lst: account_spec list) : () = 
+let initialize2 (lst: account_spec list) : () = 
   let rec aux (l: account_spec list) (n: string list) (i: int list) (b: int list) 
             : string list * int list * int list =
     match l with
     | [] -> n, i, b
     | hd :: tl -> aux tl (n @ [hd.name]) (i @ [hd.id]) (b @ [hd.balance]) in
   let n, i, b = aux lst [] [] [] in
-  database := {name = n ; id = i; balance = b};;
+  database := {name = n ; id = i; balance = b} ;;
+
+let initialize (lst: account_spec list) : () = 
+  accounts := lst ;;
 
 (*....................................................................
  Acquiring information from the customer
@@ -44,7 +47,7 @@ let rec acquire_id () : id =
   Printf.printf "Enter customer id: ";
   let id = read_int () in 
   if String.length (string_of_int id) <> 6 then Printf.printf "Invalid id"; acquire_id ()
-  else Printf.printf "Welcome %s"  
+  else Printf.printf "Welcome %s"; 
 
 (* acquire_amount () -- Requests from the ATM customer and returns an
    amount by prompting for an amount and reading an int from stdin. *)
@@ -60,7 +63,9 @@ let acquire_act () : action =
   match ac with
   | "B" -> Balance
   | "-" -> Withdraw
-  | ;;
+  | "+" -> Deposit 
+  | "=" -> Done 
+  | "X" -> Exit ;;
 
 (*....................................................................
   Querying and updating the account database
@@ -71,11 +76,11 @@ let acquire_act () : action =
   
 (* get_balance id -- Returns the balance for the customer account with
    the given id. *)
-let get_balance : id -> int ;;
+let get_balance (id : int) : int = ;;
 
 (* get_name id -- Returns the name associated with the customer
    account with the given id. *)
-let get_name : id -> string ;;
+let get_name (id: int) : string ;;
 
 (* update_balance id amount -- Modifies the balance of the customer
    account with the given id,setting it to the given amount. *)
